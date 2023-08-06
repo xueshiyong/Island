@@ -173,6 +173,60 @@ int rotten_oranges(vector<vector<int>> &orange){
     return res;
 }
 
+int oranges_rotten(vector<vector<int>> &orange){
+    int m = orange.size();
+    int n = orange[0].size();
+
+    vector<vector<int>> distance(m, vector<int>(n, -1));
+    queue<Pos> que;
+
+    int cnt = 0;
+    int res = -1;
+
+    for (int i = 0; i < m; i++){
+        for (int j = 0; j < n; j++){
+            if (orange[i][j] == 2){
+                distance[i][j] = 0;
+                Pos current_pos = {i, j};
+                que.push(current_pos);
+            }
+            if (orange[i][j] == 1){
+                cnt++;
+            }
+        }
+    }
+    vector<int> XX_POS = {-1, 1, 0, 0};
+    vector<int> YY_POS = {0, 0, -1, 1};
+
+    while (!que.empty()){
+        Pos current_pos = que.front();
+        que.pop();
+
+        for (int i = 0; i < 4; i++){
+            int xx = current_pos.x + XX_POS[i];
+            int yy = current_pos.y + YY_POS[i];
+
+            if (xx >= 0 and xx < m and yy >= 0 and yy < n and orange[xx][yy] == 1){
+                orange[xx][yy] = 2;
+                Pos next_pos = {xx, yy};
+                distance[xx][yy] = 1 + distance[current_pos.x][current_pos.y];
+                res = max(res, distance[xx][yy]);
+                cnt--;
+
+                que.push(next_pos);
+            }
+        }
+
+    }
+
+    if (cnt > 0){
+        return - 1;
+    }
+    else{
+        cout << "time: " << res << endl;
+    }
+}
+
 struct M_Pos{
     int x;
     int y;
@@ -232,6 +286,7 @@ void min_maze_path(vector<vector<int>> &Maze, Pos start, Pos end){
     }
 }
 
+
 int main(){
     vector<vector<int>> Maze = {
             {0, 0, 1, 0},
@@ -241,7 +296,5 @@ int main(){
             {0, 0, 0, 1}
     };
 
-    Pos start = {0, 0};
-    Pos end = {1, 2};
-    min_maze_path(Maze, start, end);
+
 }
